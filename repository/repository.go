@@ -1,9 +1,6 @@
 // Package repository provides the repository interfaces for the domain
 package repository
 
-import (
-)
-
+// FirebaseAuthRepository represents the repository functions of Firebase Auth
 type FirebaseAuthRepository interface {
-
 }
