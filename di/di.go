@@ -57,6 +57,6 @@ func New(c *config.Config) {
 
 	// HTTP Listening
 	if err := e.Start(":" + c.AppConfig.Port); err != nil && err != http.ErrServerClosed {
-		log.Panicf("error - [main.New] unable to start server: %v", err)
+		log.Panicf("error - [di.New] unable to start server: %v", err)
 	}
 }

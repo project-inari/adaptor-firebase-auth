@@ -2,6 +2,7 @@ package di
 
 import (
 	"context"
+	"log/slog"
 
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
@@ -24,6 +25,8 @@ func setupFirebaseAuth(pctx context.Context, c config.FirebaseAuthConfig) (*auth
 	if err != nil {
 		return nil, err
 	}
+
+	slog.Info("[di.setupFirebaseAuth] firebase auth client setup successfully")
 
 	return client, nil
 }
