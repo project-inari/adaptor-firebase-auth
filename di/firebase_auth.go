@@ -12,8 +12,7 @@ import (
 
 func setupFirebaseAuth(pctx context.Context, c config.FirebaseAuthConfig) (*auth.Client, error) {
 	firebaseConfig := &firebase.Config{
-		ProjectID:        c.ProjectID,
-		ServiceAccountID: c.ServiceAccountID,
+		ProjectID: c.ProjectID,
 	}
 
 	fb, err := firebase.NewApp(pctx, firebaseConfig, option.WithCredentialsJSON([]byte(c.CredentialsJSON)))

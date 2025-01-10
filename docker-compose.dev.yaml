@@ -12,10 +12,6 @@ services:
       - 8080:8080
     working_dir: /src/go
     command: air -c .air.toml
-    depends_on:
-      - mysql
-      - redis
-      - wiremock
     networks:
       - app-network
 

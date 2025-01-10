@@ -44,7 +44,7 @@ run:
 dev.up:
 	@echo "Starting local development..."
 	$(MAKE) local.env.prepare
-	docker compose -f docker-compose.dev.yaml up
+	docker-compose -f docker-compose.dev.yaml up
 
 ## dev.down: stop local development in docker
 .PHONY: dev.down

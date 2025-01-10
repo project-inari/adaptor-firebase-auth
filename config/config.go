@@ -55,9 +55,8 @@ type SentryConfig struct {
 
 // FirebaseAuthConfig represents the configuration of Firebase Auth
 type FirebaseAuthConfig struct {
-	ProjectID        string `env:"FIREBASE_PROJECT_ID,notEmpty"`
-	ServiceAccountID string `env:"FIREBASE_SERVICE_ACCOUNT_ID,notEmpty"`
-	CredentialsJSON  string `env:"FIREBASE_CREDENTIALS_JSON,notEmpty"`
+	ProjectID       string `env:"FIREBASE_PROJECT_ID,notEmpty"`
+	CredentialsJSON string `env:"FIREBASE_CREDENTIALS_JSON,notEmpty"`
 }
 
 func decodeBase64Field(fields ...*string) {
