@@ -12,7 +12,6 @@ import (
 
 	"github.com/project-inari/adaptor-firebase-auth/config"
 	"github.com/project-inari/adaptor-firebase-auth/handler"
-	"github.com/project-inari/adaptor-firebase-auth/pkg/httpclient"
 	"github.com/project-inari/adaptor-firebase-auth/repository"
 	"github.com/project-inari/adaptor-firebase-auth/service"
 )
@@ -28,85 +27,27 @@ func New(c *config.Config) {
 		EnableTracing:    true,
 		TracesSampleRate: 1.0,
 	}); err != nil {
-		slog.Error("error - [main.New] sentry initialization failed", slog.Any("error", err))
+		slog.Error("error - [di.New] sentry initialization failed", slog.Any("error", err))
 	}
 
 	// Echo server initialization
 	e := echo.New()
 	setupServer(ctx, e, c)
 
-	// HTTP Client initialization
-	httpClientWiremock := httpclient.NewHTTPClient(httpclient.Options{
-		MaxConns:                 c.WiremockAPIConfig.MaxConns,
-		MaxRetry:                 c.WiremockAPIConfig.MaxRetry,
-		Timeout:                  c.WiremockAPIConfig.Timeout,
-		InsecureSkipVerify:       c.WiremockAPIConfig.InsecureSkipVerify,
-		MaxTransactionsPerSecond: c.WiremockAPIConfig.MaxTransactionsPerSecond,
-	})
-
-	// MySQL initialization
-	mysqlDB, err := newMySQL(mySQLOptions{
-		host:         c.MySQLConfig.Host,
-		username:     c.MySQLConfig.Username,
-		password:     c.MySQLConfig.Password,
-		database:     c.MySQLConfig.Database,
-		timeout:      c.MySQLConfig.Timeout,
-		maxIdleConns: c.MySQLConfig.MaxIdleConns,
-		maxOpenConns: c.MySQLConfig.MaxOpenConns,
-		maxLifetime:  c.MySQLConfig.MaxLifetime,
-	})
+	// Firebase Auth initialization
+	firebaseAuthClient, err := setupFirebaseAuth(ctx, c.FirebaseAuthConfig)
 	if err != nil {
-		log.Panicf("error - [main.New] unable to connect to MySQL: %v", err)
+		log.Panicf("error - [di.New] unable to setup firebase auth: %v", err)
 	}
-	defer func() {
-		if err := mysqlDB.client.Close(); err != nil {
-			slog.Error("error - [main.New] unable to close MySQL connection", slog.Any("error", err))
-		}
-	}()
-
-	// Redis initialization
-	redisClient, err := newRedis(redisOptions{
-		host:     c.RedisConfig.Host,
-		password: c.RedisConfig.Password,
-		timeout:  c.RedisConfig.Timeout,
-		maxRetry: c.RedisConfig.MaxRetry,
-		poolSize: c.RedisConfig.PoolSize,
-	})
-	if err != nil {
-		log.Panicf("error - [main.New] unable to connect to Redis: %v", err)
-	}
-	defer func() {
-		if err := redisClient.client.Close(); err != nil {
-			slog.Error("error - [main.New] unable to close Redis connection", slog.Any("error", err))
-		}
-	}()
 
 	// Repository initialization
-	exampleRepo := repository.NewExampleRepository(repository.ExampleRepositoryConfig{})
-
-	wiremockAPIRepo := repository.NewWiremockAPIRepository(repository.WiremockAPIRepositoryConfig{
-		BaseURL: c.WiremockAPIConfig.BaseURL,
-		Path:    c.WiremockAPIConfig.Path,
-	}, repository.WiremockAPIRepositoryDependencies{
-		Client: httpClientWiremock,
-	})
-
-	databaseRepo := repository.NewDatabaseRepository(repository.DatabaseRepositoryConfig{
-		Database: c.MySQLConfig.Database,
-	}, repository.DatabaseRepositoryDependencies{
-		Client: mysqlDB.client,
-	})
-
-	cacheRepo := repository.NewCacheRepository(repository.CacheRepositoryConfig{}, repository.CacheRepositoryDependencies{
-		Client: redisClient.client,
+	firebaseAuthRepo := repository.NewFirebaseAuthRepository(repository.FirebaseAuthRepositoryDependencies{
+		Client: firebaseAuthClient,
 	})
 
 	// Service initialization
 	service := service.New(service.Dependencies{
-		ExampleRepository:     exampleRepo,
-		WiremockAPIRepository: wiremockAPIRepo,
-		DatabaseRepository:    databaseRepo,
-		CacheRepository:       cacheRepo,
+		FirebaseAuthRepository: firebaseAuthRepo,
 	})
 
 	// Handler initialization

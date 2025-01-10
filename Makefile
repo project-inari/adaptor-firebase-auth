@@ -1,4 +1,4 @@
-include .env.local
+include .env.generated
 export
 
 ## prepare: prepare required libraries for development
