@@ -5,17 +5,29 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/project-inari/adaptor-firebase-auth/dto"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/project-inari/adaptor-firebase-auth/dto"
+	"github.com/project-inari/adaptor-firebase-auth/repository"
 )
 
 type mockFirebaseAuthRepository struct {
 	token string
 	err   error
+
+	username string
+	uid      string
 }
 
 func (m *mockFirebaseAuthRepository) SignUp(_ context.Context, _ dto.SignUpReq, _ dto.SignUpReqHeader) (string, error) {
 	return m.token, m.err
+}
+
+func (m *mockFirebaseAuthRepository) VerifyToken(_ context.Context, _ string) (*repository.VerifyTokenInfo, error) {
+	return &repository.VerifyTokenInfo{
+		Username: m.username,
+		UID:      m.uid,
+	}, m.err
 }
 
 const (
@@ -24,6 +36,7 @@ const (
 	mockEmail    = "mock@email.com"
 	mockPassword = "mockPassword"
 	mockPhoneNo  = "+66000000000"
+	mockUID      = "mockUID"
 
 	enAcceptLocale = "EN"
 	thAcceptLocale = "TH"
@@ -80,5 +93,49 @@ func TestSignUp(t *testing.T) {
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "", res.Token)
+	})
+}
+
+func TestVerifyToken(t *testing.T) {
+	ctx := context.Background()
+
+	t.Run("success", func(t *testing.T) {
+		svc := New(Dependencies{
+			FirebaseAuthRepository: &mockFirebaseAuthRepository{
+				username: mockUsername,
+				uid:      mockUID,
+				err:      nil,
+			},
+		})
+
+		req := dto.VerifyTokenReq{
+			Token: mockToken,
+		}
+
+		res := svc.VerifyToken(ctx, req)
+
+		assert.Equal(t, mockUsername, res.Username)
+		assert.Equal(t, mockUID, res.UID)
+		assert.True(t, res.Success)
+	})
+
+	t.Run("error", func(t *testing.T) {
+		svc := New(Dependencies{
+			FirebaseAuthRepository: &mockFirebaseAuthRepository{
+				username: "",
+				uid:      "",
+				err:      errors.New("error"),
+			},
+		})
+
+		req := dto.VerifyTokenReq{
+			Token: mockToken,
+		}
+
+		res := svc.VerifyToken(ctx, req)
+
+		assert.Equal(t, "", res.Username)
+		assert.Equal(t, "", res.UID)
+		assert.False(t, res.Success)
 	})
 }
