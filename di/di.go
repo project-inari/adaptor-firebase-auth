@@ -22,10 +22,11 @@ func New(c *config.Config) {
 
 	// Sentry initialization
 	if err := sentry.Init(sentry.ClientOptions{
-		Dsn:              c.SentryConfig.SentryDSN,
-		Debug:            true,
-		EnableTracing:    true,
-		TracesSampleRate: 1.0,
+		Dsn:                c.SentryConfig.SentryDSN,
+		Debug:              true,
+		EnableTracing:      true,
+		TracesSampleRate:   1.0,
+		ProfilesSampleRate: 1.0,
 	}); err != nil {
 		slog.Error("error - [di.New] sentry initialization failed", slog.Any("error", err))
 	}
