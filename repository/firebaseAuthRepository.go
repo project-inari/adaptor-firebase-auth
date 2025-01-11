@@ -49,7 +49,10 @@ func (r *firebaseAuthRepository) SignUp(ctx context.Context, payload dto.SignUpR
 		return "", fmt.Errorf("error - [firebaseAuthRepository.SignUp] unable to get user: %v", err)
 	}
 
-	token, err := r.client.CustomToken(ctx, user.UID)
+	token, err := r.client.CustomTokenWithClaims(ctx, user.UID, map[string]interface{}{
+		"username":      payload.Username,
+		"accept-locale": header.AcceptLocale,
+	})
 	if err != nil {
 		return "", fmt.Errorf("error - [firebaseAuthRepository.SignUp] unable to generate token: %v", err)
 	}
