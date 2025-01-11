@@ -23,6 +23,12 @@ func NewFirebaseAuthRepository(d FirebaseAuthRepositoryDependencies) FirebaseAut
 	return &firebaseAuthRepository{client: d.Client}
 }
 
+// VerifyTokenInfo represents the information of the verified token
+type VerifyTokenInfo struct {
+	Username string
+	UID      string
+}
+
 // SignUp creates a new user in Firebase Auth
 func (r *firebaseAuthRepository) SignUp(ctx context.Context, payload dto.SignUpReq, header dto.SignUpReqHeader) (string, error) {
 	params := (&auth.UserToCreate{}).
@@ -58,4 +64,22 @@ func (r *firebaseAuthRepository) SignUp(ctx context.Context, payload dto.SignUpR
 	}
 
 	return token, nil
+}
+
+// VerifyToken verifies the token with Firebase Auth
+func (r *firebaseAuthRepository) VerifyToken(ctx context.Context, token string) (*VerifyTokenInfo, error) {
+	t, err := r.client.VerifyIDToken(ctx, token)
+	if err != nil {
+		return nil, fmt.Errorf("error - [firebaseAuthRepository.VerifyToken] unable to verify token: %v", err)
+	}
+
+	username, ok := t.Claims["username"].(string)
+	if !ok {
+		return nil, fmt.Errorf("error - [firebaseAuthRepository.VerifyToken] username claim is not a string")
+	}
+
+	return &VerifyTokenInfo{
+		Username: username,
+		UID:      t.UID,
+	}, nil
 }

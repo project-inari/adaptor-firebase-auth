@@ -11,6 +11,7 @@ import (
 // Port represents the service layer functions
 type Port interface {
 	SignUp(ctx context.Context, req dto.SignUpReq, header dto.SignUpReqHeader) (*dto.SignUpRes, error)
+	VerifyToken(ctx context.Context, req dto.VerifyTokenReq) *dto.VerifyTokenRes
 }
 
 type service struct {

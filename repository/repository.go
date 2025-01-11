@@ -10,4 +10,5 @@ import (
 // FirebaseAuthRepository represents the repository functions of Firebase Auth
 type FirebaseAuthRepository interface {
 	SignUp(ctx context.Context, payload dto.SignUpReq, header dto.SignUpReqHeader) (string, error)
+	VerifyToken(ctx context.Context, token string) (*VerifyTokenInfo, error)
 }

@@ -42,3 +42,21 @@ func (h *httpHandler) SignUp(c echo.Context) error {
 
 	return response.SuccessResponse(c, http.StatusOK, res)
 }
+
+// VerifyToken handles the request to verify a token
+func (h *httpHandler) VerifyToken(c echo.Context) error {
+	ctx := context.Background()
+	wrapper := request.ContextWrapper(c)
+
+	req := new(dto.VerifyTokenReq)
+	if err := wrapper.Bind(req); err != nil {
+		return response.ErrorResponse(c, http.StatusBadRequest, fmt.Sprintf("error - [VerifyToken] bad request: %v", err), "")
+	}
+
+	res := h.d.Service.VerifyToken(ctx, *req)
+	if !res.Success {
+		return response.SuccessResponse(c, http.StatusUnauthorized, res)
+	}
+
+	return response.SuccessResponse(c, http.StatusOK, res)
+}
