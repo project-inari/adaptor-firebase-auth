@@ -67,7 +67,7 @@ dev.up.alpha:
 	@echo "Starting alpha development..."
 	$(MAKE) alpha.env.prepare
 	sh -c '$(MAKE) portforward' 2>&1 &
-	docker compose -f docker-compose.dev.yaml up --scale mysql=0 --scale redis=0 --scale wiremock=0
+	docker compose -f docker-compose.dev.yaml up
 
 ## local.env.prepare: prepare .env.generated for local envs
 .PHONY: local.env.prepare
