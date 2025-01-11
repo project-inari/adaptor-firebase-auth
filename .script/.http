@@ -5,5 +5,5 @@ Accept-Locale: EN
     "username": "test1",
     "email": "test1@example.com",
     "password": "password",
-    "phoneNumber": "+66900000001"
+    "phoneNo": "+66900000001"
 }

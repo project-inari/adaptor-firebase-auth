@@ -19,11 +19,11 @@ func (m *mockFirebaseAuthRepository) SignUp(_ context.Context, _ dto.SignUpReq, 
 }
 
 const (
-	mockToken       = "mockToken"
-	mockUsername    = "mockUsername"
-	mockEmail       = "mock@email.com"
-	mockPassword    = "mockPassword"
-	mockPhoneNumber = "+66000000000"
+	mockToken    = "mockToken"
+	mockUsername = "mockUsername"
+	mockEmail    = "mock@email.com"
+	mockPassword = "mockPassword"
+	mockPhoneNo  = "+66000000000"
 
 	enAcceptLocale = "EN"
 	thAcceptLocale = "TH"
@@ -42,10 +42,10 @@ func TestSignUp(t *testing.T) {
 		})
 
 		req := dto.SignUpReq{
-			Username:    mockUsername,
-			Email:       mockEmail,
-			Password:    mockPassword,
-			PhoneNumber: mockPhoneNumber,
+			Username: mockUsername,
+			Email:    mockEmail,
+			Password: mockPassword,
+			PhoneNo:  mockPhoneNo,
 		}
 		header := dto.SignUpReqHeader{
 			AcceptLocale: enAcceptLocale,
@@ -66,10 +66,10 @@ func TestSignUp(t *testing.T) {
 		})
 
 		req := dto.SignUpReq{
-			Username:    mockUsername,
-			Email:       mockEmail,
-			Password:    mockPassword,
-			PhoneNumber: mockPhoneNumber,
+			Username: mockUsername,
+			Email:    mockEmail,
+			Password: mockPassword,
+			PhoneNo:  mockPhoneNo,
 		}
 
 		header := dto.SignUpReqHeader{

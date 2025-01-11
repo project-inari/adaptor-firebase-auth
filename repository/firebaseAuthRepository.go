@@ -29,7 +29,7 @@ func (r *firebaseAuthRepository) SignUp(ctx context.Context, payload dto.SignUpR
 		Email(payload.Email).
 		Password(payload.Password).
 		DisplayName(payload.Username).
-		PhoneNumber(payload.PhoneNumber)
+		PhoneNumber(payload.PhoneNo)
 
 	user, err := r.client.CreateUser(ctx, params)
 	if err != nil {
