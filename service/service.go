@@ -2,11 +2,15 @@
 package service
 
 import (
+	"context"
+
+	"github.com/project-inari/adaptor-firebase-auth/dto"
 	"github.com/project-inari/adaptor-firebase-auth/repository"
 )
 
 // Port represents the service layer functions
 type Port interface {
+	SignUp(ctx context.Context, req dto.SignUpReq, header dto.SignUpReqHeader) (*dto.SignUpRes, error)
 }
 
 type service struct {

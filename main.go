@@ -12,11 +12,7 @@ import (
 
 	"github.com/project-inari/adaptor-firebase-auth/config"
 	"github.com/project-inari/adaptor-firebase-auth/di"
-	_ "github.com/project-inari/adaptor-firebase-auth/docs"
 )
-
-// @title API Endpoints for adaptor-firebase-auth
-// @version 1.0
 
 func init() {
 	runtime.GOMAXPROCS(1)
