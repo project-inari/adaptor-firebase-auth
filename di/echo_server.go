@@ -69,6 +69,6 @@ func gracefulShutdown(ctx context.Context, e *echo.Echo, c *config.Config, quit 
 	defer cancel()
 
 	if err := e.Shutdown(ctx); err != nil {
-		log.Panicf("[main.echoServer] shutdown: %v", err)
+		log.Panicf("[di.echoServer] shutdown: %v", err)
 	}
 }
