@@ -47,6 +47,7 @@ var sensitiveFields = map[string]func(string) string{
 	"dathofbirth":       maskStringExceptFirstAndLast,
 	"transactionnumber": maskStringExceptFirstAndLast,
 	"data":              maskLargeBase64,
+	"token":             maskStringAll,
 }
 
 // MaskSensitiveData masks sensitive data in the given data used for logging
