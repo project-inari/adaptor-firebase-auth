@@ -143,3 +143,42 @@ func TestVerifyToken(t *testing.T) {
 		assert.False(t, res.Success)
 	})
 }
+
+func TestDeleteUser(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		ctx := context.Background()
+
+		svc := New(Dependencies{
+			FirebaseAuthRepository: &mockFirebaseAuthRepository{
+				err: nil,
+			},
+		})
+
+		req := dto.DeleteUserReq{
+			UID: mockUID,
+		}
+
+		res, err := svc.DeleteUser(ctx, req)
+
+		assert.Nil(t, err)
+		assert.True(t, res.Success)
+	})
+
+	t.Run("error", func(t *testing.T) {
+		ctx := context.Background()
+
+		svc := New(Dependencies{
+			FirebaseAuthRepository: &mockFirebaseAuthRepository{
+				err: errors.New("error"),
+			},
+		})
+
+		req := dto.DeleteUserReq{
+			UID: mockUID,
+		}
+
+		_, err := svc.DeleteUser(ctx, req)
+
+		assert.NotNil(t, err)
+	})
+}
