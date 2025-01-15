@@ -12,6 +12,7 @@ import (
 type Port interface {
 	SignUp(ctx context.Context, req dto.SignUpReq, header dto.SignUpReqHeader) (*dto.SignUpRes, error)
 	VerifyToken(ctx context.Context, req dto.VerifyTokenReq) *dto.VerifyTokenRes
+	DeleteUser(ctx context.Context, req dto.DeleteUserReq) (*dto.DeleteUserRes, error)
 }
 
 type service struct {
