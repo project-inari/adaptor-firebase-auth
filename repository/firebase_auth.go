@@ -83,3 +83,13 @@ func (r *firebaseAuthRepository) VerifyToken(ctx context.Context, token string) 
 		UID:      t.UID,
 	}, nil
 }
+
+// DeleteUser deletes a user in Firebase Auth
+func (r *firebaseAuthRepository) DeleteUser(ctx context.Context, uid string) error {
+	err := r.client.DeleteUser(ctx, uid)
+	if err != nil {
+		return fmt.Errorf("error - [firebaseAuthRepository.DeleteUser] unable to delete user: %v", err)
+	}
+
+	return nil
+}

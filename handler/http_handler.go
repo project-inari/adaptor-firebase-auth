@@ -60,3 +60,21 @@ func (h *httpHandler) VerifyToken(c echo.Context) error {
 
 	return response.SuccessResponse(c, http.StatusOK, res)
 }
+
+// DeleteUser handles the request to delete a user
+func (h *httpHandler) DeleteUser(c echo.Context) error {
+	ctx := context.Background()
+	wrapper := request.ContextWrapper(c)
+
+	req := new(dto.DeleteUserReq)
+	if err := wrapper.Bind(req); err != nil {
+		return response.ErrorResponse(c, http.StatusBadRequest, fmt.Sprintf("error - [DeleteUser] bad request: %v", err), "")
+	}
+
+	res, err := h.d.Service.DeleteUser(ctx, *req)
+	if err != nil {
+		return response.ErrorResponse(c, http.StatusInternalServerError, fmt.Sprintf("error - [DeleteUser] unable to delete user: %v", err), "")
+	}
+
+	return response.SuccessResponse(c, http.StatusOK, res)
+}

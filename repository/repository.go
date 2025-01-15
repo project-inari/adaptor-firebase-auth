@@ -11,4 +11,5 @@ import (
 type FirebaseAuthRepository interface {
 	SignUp(ctx context.Context, payload dto.SignUpReq, header dto.SignUpReqHeader) (string, error)
 	VerifyToken(ctx context.Context, token string) (*VerifyTokenInfo, error)
+	DeleteUser(ctx context.Context, uid string) error
 }
