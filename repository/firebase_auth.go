@@ -23,6 +23,12 @@ func NewFirebaseAuthRepository(d FirebaseAuthRepositoryDependencies) FirebaseAut
 	return &firebaseAuthRepository{client: d.Client}
 }
 
+// SignUpInfo represents the information of the signed up user
+type SignUpInfo struct {
+	UID   string
+	Token string
+}
+
 // VerifyTokenInfo represents the information of the verified token
 type VerifyTokenInfo struct {
 	Username string
@@ -30,7 +36,7 @@ type VerifyTokenInfo struct {
 }
 
 // SignUp creates a new user in Firebase Auth
-func (r *firebaseAuthRepository) SignUp(ctx context.Context, payload dto.SignUpReq, header dto.SignUpReqHeader) (string, error) {
+func (r *firebaseAuthRepository) SignUp(ctx context.Context, payload dto.SignUpReq, header dto.SignUpReqHeader) (*SignUpInfo, error) {
 	params := (&auth.UserToCreate{}).
 		Email(payload.Email).
 		Password(payload.Password).
@@ -39,7 +45,7 @@ func (r *firebaseAuthRepository) SignUp(ctx context.Context, payload dto.SignUpR
 
 	user, err := r.client.CreateUser(ctx, params)
 	if err != nil {
-		return "", fmt.Errorf("error - [firebaseAuthRepository.SignUp] unable to create user: %v", err)
+		return nil, fmt.Errorf("error - [firebaseAuthRepository.SignUp] unable to create user: %v", err)
 	}
 
 	err = r.client.SetCustomUserClaims(ctx, user.UID, map[string]interface{}{
@@ -47,12 +53,12 @@ func (r *firebaseAuthRepository) SignUp(ctx context.Context, payload dto.SignUpR
 		"accept-locale": header.AcceptLocale,
 	})
 	if err != nil {
-		return "", fmt.Errorf("error - [firebaseAuthRepository.SignUp] unable to set user claims: %v", err)
+		return nil, fmt.Errorf("error - [firebaseAuthRepository.SignUp] unable to set user claims: %v", err)
 	}
 
 	user, err = r.client.GetUser(ctx, user.UID)
 	if err != nil {
-		return "", fmt.Errorf("error - [firebaseAuthRepository.SignUp] unable to get user: %v", err)
+		return nil, fmt.Errorf("error - [firebaseAuthRepository.SignUp] unable to get user: %v", err)
 	}
 
 	token, err := r.client.CustomTokenWithClaims(ctx, user.UID, map[string]interface{}{
@@ -60,10 +66,13 @@ func (r *firebaseAuthRepository) SignUp(ctx context.Context, payload dto.SignUpR
 		"accept-locale": header.AcceptLocale,
 	})
 	if err != nil {
-		return "", fmt.Errorf("error - [firebaseAuthRepository.SignUp] unable to generate token: %v", err)
+		return nil, fmt.Errorf("error - [firebaseAuthRepository.SignUp] unable to generate token: %v", err)
 	}
 
-	return token, nil
+	return &SignUpInfo{
+		UID:   user.UID,
+		Token: token,
+	}, nil
 }
 
 // VerifyToken verifies the token with Firebase Auth

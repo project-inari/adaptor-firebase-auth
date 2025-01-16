@@ -2,10 +2,10 @@ POST http://localhost:8080/v1/signup
 Content-Type: application/json
 Accept-Locale: EN
 {
-    "username": "test1",
-    "email": "test1@example.com",
+    "username": "test2",
+    "email": "test2@example.com",
     "password": "password",
-    "phoneNo": "+66900000001"
+    "phoneNo": "+66900000002"
 }
 
 POST http://localhost:8080/v1/verify-token
@@ -17,7 +17,7 @@ Content-Type: application/json
 DELETE http://localhost:8080/v1/user
 Content-Type: application/json
 {
-    "uid": "FRCpx4i0IBVfwKGtMtV2kXgRV8Z2"
+    "uid": "MdLEZ64cyESfg7BKyFV7CDerlGX2"
 }
 
 POST https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAAg6O8ncxmlSN3bRyrEBEBttJLCHeugKo

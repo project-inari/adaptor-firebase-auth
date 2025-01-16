@@ -19,8 +19,11 @@ type mockFirebaseAuthRepository struct {
 	uid      string
 }
 
-func (m *mockFirebaseAuthRepository) SignUp(_ context.Context, _ dto.SignUpReq, _ dto.SignUpReqHeader) (string, error) {
-	return m.token, m.err
+func (m *mockFirebaseAuthRepository) SignUp(_ context.Context, _ dto.SignUpReq, _ dto.SignUpReqHeader) (*repository.SignUpInfo, error) {
+	return &repository.SignUpInfo{
+		UID:   mockUID,
+		Token: m.token,
+	}, m.err
 }
 
 func (m *mockFirebaseAuthRepository) VerifyToken(_ context.Context, _ string) (*repository.VerifyTokenInfo, error) {
@@ -53,6 +56,7 @@ func TestSignUp(t *testing.T) {
 
 		svc := New(Dependencies{
 			FirebaseAuthRepository: &mockFirebaseAuthRepository{
+				uid:   mockUID,
 				token: mockToken,
 				err:   nil,
 			},
@@ -71,12 +75,15 @@ func TestSignUp(t *testing.T) {
 		res, err := svc.SignUp(ctx, req, header)
 
 		assert.Nil(t, err)
+		assert.Equal(t, mockUsername, res.Username)
+		assert.Equal(t, mockUID, res.UID)
 		assert.Equal(t, mockToken, res.Token)
 	})
 
 	t.Run("error", func(t *testing.T) {
 		svc := New(Dependencies{
 			FirebaseAuthRepository: &mockFirebaseAuthRepository{
+				uid:   "",
 				token: "",
 				err:   errors.New("error"),
 			},
@@ -96,7 +103,7 @@ func TestSignUp(t *testing.T) {
 		res, err := svc.SignUp(ctx, req, header)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "", res.Token)
+		assert.Nil(t, res)
 	})
 }
 
@@ -177,8 +184,9 @@ func TestDeleteUser(t *testing.T) {
 			UID: mockUID,
 		}
 
-		_, err := svc.DeleteUser(ctx, req)
+		res, err := svc.DeleteUser(ctx, req)
 
 		assert.NotNil(t, err)
+		assert.Nil(t, res)
 	})
 }
