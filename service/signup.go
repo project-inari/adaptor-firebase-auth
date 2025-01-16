@@ -10,10 +10,12 @@ import (
 func (s *service) SignUp(ctx context.Context, req dto.SignUpReq, header dto.SignUpReqHeader) (*dto.SignUpRes, error) {
 	res, err := s.firebaseAuthRepository.SignUp(ctx, req, header)
 	if err != nil {
-		return &dto.SignUpRes{}, err
+		return nil, err
 	}
 
 	return &dto.SignUpRes{
-		Token: res,
+		Username: req.Username,
+		UID:      res.UID,
+		Token:    res.Token,
 	}, nil
 }
