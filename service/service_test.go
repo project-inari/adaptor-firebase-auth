@@ -155,6 +155,50 @@ func TestVerifyToken(t *testing.T) {
 	})
 }
 
+func TestUpdateUsername(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		ctx := context.Background()
+
+		svc := New(Dependencies{
+			FirebaseAuthRepository: &mockFirebaseAuthRepository{
+				err: nil,
+			},
+		})
+
+		req := dto.UpdateUsernameReq{
+			UID:         mockUID,
+			NewUsername: mockUsername,
+		}
+
+		res, err := svc.UpdateUsername(ctx, req)
+
+		assert.Nil(t, err)
+		assert.Equal(t, mockUsername, res.Username)
+		assert.Equal(t, mockUID, res.UID)
+		assert.True(t, res.Success)
+	})
+
+	t.Run("error", func(t *testing.T) {
+		ctx := context.Background()
+
+		svc := New(Dependencies{
+			FirebaseAuthRepository: &mockFirebaseAuthRepository{
+				err: errors.New("error"),
+			},
+		})
+
+		req := dto.UpdateUsernameReq{
+			UID:         mockUID,
+			NewUsername: mockUsername,
+		}
+
+		res, err := svc.UpdateUsername(ctx, req)
+
+		assert.NotNil(t, err)
+		assert.Nil(t, res)
+	})
+}
+
 func TestDeleteUser(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		ctx := context.Background()
