@@ -33,6 +33,10 @@ func (m *mockFirebaseAuthRepository) VerifyToken(_ context.Context, _ string) (*
 	}, m.err
 }
 
+func (m *mockFirebaseAuthRepository) UpdateUsername(_ context.Context, _ string, _ string) error {
+	return m.err
+}
+
 func (m *mockFirebaseAuthRepository) DeleteUser(_ context.Context, _ string) error {
 	return m.err
 }
