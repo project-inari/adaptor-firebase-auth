@@ -61,6 +61,24 @@ func (h *httpHandler) VerifyToken(c echo.Context) error {
 	return response.SuccessResponse(c, http.StatusOK, res)
 }
 
+// UpdateUsername handles the request to update a username
+func (h *httpHandler) UpdateUsername(c echo.Context) error {
+	ctx := context.Background()
+	wrapper := request.ContextWrapper(c)
+
+	req := new(dto.UpdateUsernameReq)
+	if err := wrapper.Bind(req); err != nil {
+		return response.ErrorResponse(c, http.StatusBadRequest, fmt.Sprintf("error - [UpdateUsername] bad request: %v", err), "")
+	}
+
+	res, err := h.d.Service.UpdateUsername(ctx, *req)
+	if err != nil {
+		return response.ErrorResponse(c, http.StatusInternalServerError, fmt.Sprintf("error - [UpdateUsername] unable to update username: %v", err), "")
+	}
+
+	return response.SuccessResponse(c, http.StatusOK, res)
+}
+
 // DeleteUser handles the request to delete a user
 func (h *httpHandler) DeleteUser(c echo.Context) error {
 	ctx := context.Background()

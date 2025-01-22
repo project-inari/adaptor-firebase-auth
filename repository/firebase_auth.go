@@ -93,6 +93,16 @@ func (r *firebaseAuthRepository) VerifyToken(ctx context.Context, token string) 
 	}, nil
 }
 
+// UpdateUsername updates the username of a user in Firebase Auth
+func (r *firebaseAuthRepository) UpdateUsername(ctx context.Context, uid string, newUsername string) error {
+	_, err := r.client.UpdateUser(ctx, uid, (&auth.UserToUpdate{}).DisplayName(newUsername))
+	if err != nil {
+		return fmt.Errorf("error - [firebaseAuthRepository.UpdateUsername] unable to update username: %v", err)
+	}
+
+	return nil
+}
+
 // DeleteUser deletes a user in Firebase Auth
 func (r *firebaseAuthRepository) DeleteUser(ctx context.Context, uid string) error {
 	err := r.client.DeleteUser(ctx, uid)
